@@ -146,7 +146,7 @@ Sudoku::Sudoku(string s) : _cells(81) {
 
 size_t limit_ = 1;
 size_t solutions_ = 0;
-size_t backtracks_ = 0;
+size_t guesses_ = 0;
 unique_ptr<Sudoku> solution_(nullptr);
 
 void solve(unique_ptr<Sudoku> S) {
@@ -162,8 +162,10 @@ void solve(unique_ptr<Sudoku> S) {
     }
     int k = S->least_count();
     Possible p = S->possible(k);
+    int remaining = p.count();
     for (int i = 1; i <= 9; i++) {
         if (p.is_on(i)) {
+            guesses_ += (remaining-- > 1);
             unique_ptr<Sudoku> S1(new Sudoku(*S));
             if (S1->assign(k, i)) {
                 solve(std::move(S1));
@@ -171,7 +173,6 @@ void solve(unique_ptr<Sudoku> S) {
                     return;
                 }
             }
-            backtracks_++;
         }
     }
 }
@@ -183,10 +184,10 @@ size_t OtherSolverNorvig(const char *input, size_t limit, uint32_t /*unused_conf
     string puzzle(input);
     limit_ = limit;
     solutions_ = 0;
-    backtracks_ = 0;
+    guesses_ = 0;
     solution_ = nullptr;
     solve(unique_ptr<Sudoku>(new Sudoku(puzzle)));
     if (solution_) solution_->write(solution);
-    *num_guesses = backtracks_;
+    *num_guesses = guesses_;
     return solutions_;
 }
