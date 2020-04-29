@@ -6,16 +6,13 @@
 using namespace std;
 
 class Possible {
-    vector<bool> _b;
+    int _b;
 public:
-    Possible() : _b(9, true) {}
-    bool is_on(int i) const { return _b[i - 1]; }
-    int count() const { return std::count(_b.begin(), _b.end(), true); }
-    void eliminate(int i) { _b[i - 1] = false; }
-    int val() const {
-        auto it = find(_b.begin(), _b.end(), true);
-        return (it != _b.end() ? 1 + (it - _b.begin()) : -1);
-    }
+    Possible() : _b(0x1ff) {}
+    bool is_on(int i) const { return _b & (1 << (i - 1)); }
+    int count() const { return __builtin_popcount(_b); }
+    void eliminate(int i) { _b &= ~(1 << (i - 1)); }
+    int val() const { return  __builtin_ffs(_b); }
 };
 
 class Sudoku {
