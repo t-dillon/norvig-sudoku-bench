@@ -127,16 +127,25 @@ int Sudoku::least_count() const {
 }
 
 Sudoku::Sudoku(string s) : _cells(81) {
-    int k = 0;
-    for (int i = 0; i < s.size(); i++) {
-        if (s[i] >= '1' && s[i] <= '9') {
-            if (!assign(k, s[i] - '0')) {
-                _invalid = true;
-                return;
+    if (s.length() >= 729) {
+        for (int i = 0; i < 81; i++) {
+            for (int v = 0; v < 9; v++) {
+                if (s[i * 9 + v] == '.') {
+                    if (!eliminate(i, v + 1)) {
+                        _invalid = true;
+                        return;
+                    }
+                }
             }
-            k++;
-        } else if (s[i] == '0' || s[i] == '.') {
-            k++;
+        }
+    } else {
+        for (int i = 0; i < 81; i++) {
+            if (s[i] >= '1' && s[i] <= '9') {
+                if (!assign(i, s[i] - '0')) {
+                    _invalid = true;
+                    return;
+                }
+            }
         }
     }
 }
